@@ -228,7 +228,7 @@ function BookingApp() {
           lastName: patientData.lastName || '',
           email: patientData.email,
           phone: patientData.phone,
-          dateOfBirth: formatDateToUTC(new Date(patientData.dateOfBirth)),
+          dateOfBirth: patientData.dateOfBirth,
           returningPatient: patientData.returningPatient,
           gender: patientData.sex,
           referringDoctor: patientData.referringDoctor || '',

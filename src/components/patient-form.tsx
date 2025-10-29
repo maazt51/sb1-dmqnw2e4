@@ -370,6 +370,12 @@ export function PatientForm({ onSubmit, onCancel }: PatientFormProps) {
           </Button>
         </div>
       </form>
+      
+      <div className="mt-6 p-4 bg-blue-50 border border-blue-200 rounded-md">
+        <p className="text-sm text-blue-800">
+          <strong>Please note:</strong> The fee for your initial visit is $295, which includes an examination as well as all x-rays and records taken during your appointment.
+        </p>
+      </div>
     </div>
   );
 }

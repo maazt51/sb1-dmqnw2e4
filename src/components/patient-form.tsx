@@ -16,7 +16,7 @@ export interface PatientFormData {
   returningPatient: boolean;
   sex: 'male' | 'female' | '';
   referringDoctor: string;
-  reasonForVisit?: string;
+  reasonForVisit: string;
 }
 
 export function PatientForm({ onSubmit, onCancel }: PatientFormProps) {
@@ -94,6 +94,10 @@ export function PatientForm({ onSubmit, onCancel }: PatientFormProps) {
 
     if (!formData.referringDoctor.trim()) {
       newErrors.referringDoctor = 'Referring doctor is required';
+    }
+
+    if (!formData.reasonForVisit.trim()) {
+      newErrors.reasonForVisit = 'Reason for visit is required';
     }
 
     if (Object.keys(newErrors).length > 0) {
@@ -295,7 +299,7 @@ export function PatientForm({ onSubmit, onCancel }: PatientFormProps) {
         {/* Referring Doctor */}
         <div>
           <label className="block text-sm font-medium text-gray-700 mb-1" htmlFor="referringDoctor">
-            Referring Doctor *
+            Referring Doctor and Clinic *
           </label>
           <div className="relative">
             <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
@@ -321,7 +325,7 @@ export function PatientForm({ onSubmit, onCancel }: PatientFormProps) {
         {/* Reason for Visit */}
         <div>
           <label className="block text-sm font-medium text-gray-700 mb-1" htmlFor="reasonForVisit">
-            Reason for Visit (Optional)
+            Reason for Visit *
           </label>
           <div className="relative">
             <div className="absolute top-3 left-3">
@@ -333,10 +337,15 @@ export function PatientForm({ onSubmit, onCancel }: PatientFormProps) {
               value={formData.reasonForVisit}
               onChange={handleChange}
               rows={3}
-              className="block w-full pl-10 pr-3 py-2 rounded-md border border-gray-300 focus:outline-none focus:ring-1 focus:ring-blue-500 focus:border-blue-500"
+              className={`block w-full pl-10 pr-3 py-2 rounded-md border ${
+                errors.reasonForVisit ? 'border-red-300' : 'border-gray-300'
+              } focus:outline-none focus:ring-1 focus:ring-blue-500 focus:border-blue-500`}
               placeholder="Please describe your reason for visit"
             />
           </div>
+          {errors.reasonForVisit && (
+            <p className="mt-1 text-sm text-red-600">{errors.reasonForVisit}</p>
+          )}
         </div>
 
         {/* Returning Patient Checkbox */}

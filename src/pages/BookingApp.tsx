@@ -211,16 +211,6 @@ function BookingApp() {
         }
       }
 
-      // First, update the appointment slot status to 'booked'
-      const { error: slotUpdateError } = await supabase
-        .from('appointment_slots')
-        .update({ status: 'booked' })
-        .eq('id', selectedSlot.id);
-
-      if (slotUpdateError) {
-        throw new Error(`Failed to update slot status: ${slotUpdateError.message}`);
-      }
-
       // Step 3: Proceed with UiPath booking
       const bookingPayload = {
         patient: {

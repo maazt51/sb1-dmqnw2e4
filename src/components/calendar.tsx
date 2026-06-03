@@ -32,6 +32,11 @@ export function Calendar({ onDateSelect, locationId, providerId }: CalendarProps
       setLoading(true);
       
       try {
+        // Check if Supabase client is properly configured
+        if (!supabase.supabaseUrl || !supabase.supabaseKey) {
+          throw new Error('Supabase configuration is missing. Please check your environment variables.');
+        }
+
         let query = supabase
           .from('appointment_slots')
           .select('date')
@@ -59,6 +64,17 @@ export function Calendar({ onDateSelect, locationId, providerId }: CalendarProps
         setAvailableDates(dates);
       } catch (err) {
         console.error('Error fetching available dates:', err);
+        
+        // Provide more specific error information
+        if (err instanceof TypeError && err.message.includes('Failed to fetch')) {
+          console.error('Network error details:', {
+            supabaseUrl: import.meta.env.VITE_SUPABASE_URL,
+            hasAnonKey: !!import.meta.env.VITE_SUPABASE_ANON_KEY,
+            error: err.message
+          });
+          console.warn('Please check: 1) Supabase project is active, 2) Environment variables are correct, 3) Network connectivity');
+        }
+        
         setAvailableDates([]);
       } finally {
         setLoading(false);

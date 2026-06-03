@@ -22,6 +22,7 @@ function BookingApp() {
   const [showBookingSummary, setShowBookingSummary] = useState(false);
   const [patientData, setPatientData] = useState<PatientFormData | null>(null);
   const [bookingSuccess, setBookingSuccess] = useState<{ processId: string; state: string } | null>(null);
+  const [showMaintenanceBanner, setShowMaintenanceBanner] = useState(true);
 
   const timeZone = Intl.DateTimeFormat().resolvedOptions().timeZone;
 
@@ -342,170 +343,194 @@ function BookingApp() {
       {/* Main Content */}
       <main className="max-w-7xl mx-auto px-4 py-8 sm:px-6 lg:px-8">
         <div className="max-w-4xl mx-auto">
-          {bookingSuccess && (
-            <div className="mb-6 p-4 bg-green-50 border border-green-200 rounded-md">
-              <h3 className="text-lg font-medium text-green-800 mb-2">Booking Received!</h3>
-              <p className="text-green-700">Your appointment request has been received and is now being processed. It takes 5-10 minutes for bookings to be finalized.</p>
-              <p className="text-green-700 mt-2">You will receive a confirmation email once your appointment is successfully booked in our system.</p>
+          {/* Maintenance Banner */}
+          {showMaintenanceBanner && (
+            <div className="mb-6 p-4 bg-red-50 border border-red-200 rounded-md">
+              <div className="flex items-center">
+                <div className="flex-shrink-0">
+                  <svg className="h-5 w-5 text-red-400" viewBox="0 0 20 20" fill="currentColor">
+                    <path fillRule="evenodd" d="M8.257 3.099c.765-1.36 2.722-1.36 3.486 0l5.58 9.92c.75 1.334-.213 2.98-1.742 2.98H4.42c-1.53 0-2.493-1.646-1.743-2.98l5.58-9.92zM11 13a1 1 0 11-2 0 1 1 0 012 0zm-1-8a1 1 0 00-1 1v3a1 1 0 002 0V6a1 1 0 00-1-1z" clipRule="evenodd" />
+                  </svg>
+                </div>
+                <div className="ml-3">
+                  <p className="text-sm text-red-800">
+                    Online Booking Site Temporarily Down for Maintenance - please call or text us at{' '}
+                    <a href="tel:206-223-1501" className="font-medium text-red-600 hover:text-red-900 underline">
+                      206-223-1501
+                    </a>
+                  </p>
+                </div>
+              </div>
             </div>
           )}
 
-          {showPatientForm ? (
-            <PatientForm
-              onSubmit={handlePatientFormSubmit}
-              onCancel={handlePatientFormCancel}
-            />
-          ) : showBookingSummary && selectedSlot && patientData ? (
-            <div className="bg-white p-6 rounded-lg shadow-lg border">
-              <h3 className="text-lg font-semibold mb-4 flex items-center">
-                <CalendarCheck className="h-5 w-5 mr-2 text-blue-600" />
-                Booking Summary
-              </h3>
-              <div className="space-y-4">
-                <div className="bg-gray-50 p-4 rounded-md">
-                  <h4 className="font-medium text-gray-900 mb-2">Patient Information</h4>
-                  <div className="space-y-2 text-sm">
-                    <p><strong>Name:</strong> {patientData.firstName} {patientData.lastName}</p>
-                    <p><strong>Date of Birth:</strong> {formatDateForDisplay(new Date(patientData.dateOfBirth))}</p>
-                    <p><strong>Phone:</strong> {patientData.phone}</p>
-                    <p><strong>Email:</strong> {patientData.email}</p>
-                    <p><strong>Patient Type:</strong> {patientData.returningPatient ? 'Returning Patient' : 'New Patient'}</p>
-                    {patientData.referringDoctor && (
-                      <p><strong>Referring Doctor:</strong> {patientData.referringDoctor}</p>
-                    )}
-                    {patientData.reasonForVisit && (
-                      <p><strong>Reason for Visit:</strong> {patientData.reasonForVisit}</p>
-                    )}
+          {/* Main Content - Disabled when maintenance banner is shown */}
+          <div className={showMaintenanceBanner ? 'pointer-events-none opacity-50' : ''}>
+            {bookingSuccess && (
+              <div className="mb-6 p-4 bg-green-50 border border-green-200 rounded-md">
+                <h3 className="text-lg font-medium text-green-800 mb-2">Booking Received!</h3>
+                <p className="text-green-700">Your appointment request has been received and is now being processed. It takes 5-10 minutes for bookings to be finalized.</p>
+                <p className="text-green-700 mt-2">You will receive a confirmation email once your appointment is successfully booked in our system.</p>
+              </div>
+            )}
+
+            {showPatientForm ? (
+              <PatientForm
+                onSubmit={handlePatientFormSubmit}
+                onCancel={handlePatientFormCancel}
+              />
+            ) : showBookingSummary && selectedSlot && patientData ? (
+              <div className="bg-white p-6 rounded-lg shadow-lg border">
+                <h3 className="text-lg font-semibold mb-4 flex items-center">
+                  <CalendarCheck className="h-5 w-5 mr-2 text-blue-600" />
+                  Booking Summary
+                </h3>
+                <div className="space-y-4">
+                  <div className="bg-gray-50 p-4 rounded-md">
+                    <h4 className="font-medium text-gray-900 mb-2">Patient Information</h4>
+                    <div className="space-y-2 text-sm">
+                      <p><strong>Name:</strong> {patientData.firstName} {patientData.lastName}</p>
+                      <p><strong>Date of Birth:</strong> {formatDateForDisplay(new Date(patientData.dateOfBirth))}</p>
+                      <p><strong>Phone:</strong> {patientData.phone}</p>
+                      <p><strong>Email:</strong> {patientData.email}</p>
+                      <p><strong>Patient Type:</strong> {patientData.returningPatient ? 'Returning Patient' : 'New Patient'}</p>
+                      {patientData.referringDoctor && (
+                        <p><strong>Referring Doctor:</strong> {patientData.referringDoctor}</p>
+                      )}
+                      {patientData.reasonForVisit && (
+                        <p><strong>Reason for Visit:</strong> {patientData.reasonForVisit}</p>
+                      )}
+                    </div>
                   </div>
-                </div>
-                
-                <div className="bg-gray-50 p-4 rounded-md">
-                  <h4 className="font-medium text-gray-900 mb-2">Appointment Details</h4>
-                  <div className="space-y-2 text-sm">
-                    <p><strong>Location:</strong> {selectedLocation?.name}</p>
-                    <p><strong>Provider:</strong> {selectedSlot.provider.name}</p>
-                    <p><strong>Date:</strong> {formatDateForDisplay(selectedDate!)}</p>
-                    <div className="flex items-start gap-2">
-                      <Clock className="h-5 w-5 text-blue-600 mt-0.5" />
-                      <div>
-                        <p><strong>Time:</strong> {formatTimeForDisplay(selectedSlot.start_time)} - {formatTimeForDisplay(selectedSlot.end_time)}</p>
-                        <p className="text-sm text-gray-500">Time Zone: {timeZone}</p>
+                  
+                  <div className="bg-gray-50 p-4 rounded-md">
+                    <h4 className="font-medium text-gray-900 mb-2">Appointment Details</h4>
+                    <div className="space-y-2 text-sm">
+                      <p><strong>Location:</strong> {selectedLocation?.name}</p>
+                      <p><strong>Provider:</strong> {selectedSlot.provider.name}</p>
+                      <p><strong>Date:</strong> {formatDateForDisplay(selectedDate!)}</p>
+                      <div className="flex items-start gap-2">
+                        <Clock className="h-5 w-5 text-blue-600 mt-0.5" />
+                        <div>
+                          <p><strong>Time:</strong> {formatTimeForDisplay(selectedSlot.start_time)} - {formatTimeForDisplay(selectedSlot.end_time)}</p>
+                          <p className="text-sm text-gray-500">Time Zone: {timeZone}</p>
+                        </div>
                       </div>
                     </div>
                   </div>
                 </div>
-              </div>
 
-              <div className="mt-6 flex justify-end space-x-3">
-                <Button
-                  variant="outline"
-                  onClick={() => {
-                    setShowBookingSummary(false);
-                    setShowPatientForm(true);
-                  }}
-                >
-                  Edit Patient Info
-                </Button>
-                <Button
-                  className="bg-blue-600 hover:bg-blue-700 text-white"
-                  onClick={handleBookingConfirm}
-                  disabled={loading}
-                >
-                  {loading ? 'Processing...' : 'Confirm Booking'}
-                </Button>
-              </div>
-
-              {error && (
-                <div className="mt-4 p-4 bg-red-50 border border-red-200 rounded-md">
-                  <p className="text-red-600">{error}</p>
+                <div className="mt-6 flex justify-end space-x-3">
+                  <Button
+                    variant="outline"
+                    onClick={() => {
+                      setShowBookingSummary(false);
+                      setShowPatientForm(true);
+                    }}
+                  >
+                    Edit Patient Info
+                  </Button>
+                  <Button
+                    className="bg-blue-600 hover:bg-blue-700 text-white"
+                    onClick={handleBookingConfirm}
+                    disabled={loading}
+                  >
+                    {loading ? 'Processing...' : 'Confirm Booking'}
+                  </Button>
                 </div>
-              )}
-            </div>
-          ) : (
-            <>
-              {/* Location Selection */}
-              <div className="mb-8">
-                <div className="flex items-center gap-2 mb-2">
-                  <MapPin className="h-5 w-5 text-blue-600" />
-                  <h2 className="text-lg font-semibold text-gray-900">Select Provider Location</h2>
-                </div>
-                <select
-                  value={selectedLocationId || ''}
-                  onChange={handleLocationChange}
-                  className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm"
-                >
-                  <option value="">Select a location</option>
-                  {locations.map((location) => (
-                    <option key={location.id} value={location.id}>
-                      {location.name}
-                    </option>
-                  ))}
-                </select>
-              </div>
 
-              {/* Provider Selection */}
-              {selectedLocationId && (
+                {error && (
+                  <div className="mt-4 p-4 bg-red-50 border border-red-200 rounded-md">
+                    <p className="text-red-600">{error}</p>
+                  </div>
+                )}
+              </div>
+            ) : (
+              <>
+                {/* Location Selection */}
                 <div className="mb-8">
                   <div className="flex items-center gap-2 mb-2">
-                    <UserRound className="h-5 w-5 text-blue-600" />
-                    <h2 className="text-lg font-semibold text-gray-900">Choose Dr.</h2>
+                    <MapPin className="h-5 w-5 text-blue-600" />
+                    <h2 className="text-lg font-semibold text-gray-900">Select Provider Location</h2>
                   </div>
                   <select
-                    value={selectedProviderId || 'first-available'}
-                    onChange={handleProviderChange}
+                    value={selectedLocationId || ''}
+                    onChange={handleLocationChange}
                     className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm"
                   >
-                    <option value="first-available">First Available</option>
-                    {providers.map((provider) => (
-                      <option key={provider.id} value={provider.id}>
-                        {provider.name}
+                    <option value="">Select a location</option>
+                    {locations.map((location) => (
+                      <option key={location.id} value={location.id}>
+                        {location.name}
                       </option>
                     ))}
                   </select>
                 </div>
-              )}
 
-              {/* Booking Progress */}
-              <div className="mb-8">
-                <div className="flex items-center justify-center space-x-4">
-                  <div className={`flex items-center ${selectedDate ? 'text-blue-600' : 'text-gray-400'}`}>
-                    <div className="flex items-center justify-center w-8 h-8 rounded-full border-2 border-current">
-                      1
+                {/* Provider Selection */}
+                {selectedLocationId && (
+                  <div className="mb-8">
+                    <div className="flex items-center gap-2 mb-2">
+                      <UserRound className="h-5 w-5 text-blue-600" />
+                      <h2 className="text-lg font-semibold text-gray-900">Choose Dr.</h2>
                     </div>
-                    <span className="ml-2 font-medium">Select Date</span>
+                    <select
+                      value={selectedProviderId || 'first-available'}
+                      onChange={handleProviderChange}
+                      className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm"
+                    >
+                      <option value="first-available">First Available</option>
+                      {providers.map((provider) => (
+                        <option key={provider.id} value={provider.id}>
+                          {provider.name}
+                        </option>
+                      ))}
+                    </select>
                   </div>
-                  <div className={`flex-1 h-0.5 ${selectedDate ? 'bg-blue-600' : 'bg-gray-200'}`} />
-                  <div className={`flex items-center ${selectedTime ? 'text-blue-600' : 'text-gray-400'}`}>
-                    <div className="flex items-center justify-center w-8 h-8 rounded-full border-2 border-current">
-                      2
+                )}
+
+                {/* Booking Progress */}
+                <div className="mb-8">
+                  <div className="flex items-center justify-center space-x-4">
+                    <div className={`flex items-center ${selectedDate ? 'text-blue-600' : 'text-gray-400'}`}>
+                      <div className="flex items-center justify-center w-8 h-8 rounded-full border-2 border-current">
+                        1
+                      </div>
+                      <span className="ml-2 font-medium">Select Date</span>
                     </div>
-                    <span className="ml-2 font-medium">Choose Time</span>
+                    <div className={`flex-1 h-0.5 ${selectedDate ? 'bg-blue-600' : 'bg-gray-200'}`} />
+                    <div className={`flex items-center ${selectedTime ? 'text-blue-600' : 'text-gray-400'}`}>
+                      <div className="flex items-center justify-center w-8 h-8 rounded-full border-2 border-current">
+                        2
+                      </div>
+                      <span className="ml-2 font-medium">Choose Time</span>
+                    </div>
                   </div>
                 </div>
-              </div>
 
-              {error && (
-                <div className="mb-4 p-4 bg-red-50 border border-red-200 rounded-md">
-                  <p className="text-red-600">{error}</p>
+                {error && (
+                  <div className="mb-4 p-4 bg-red-50 border border-red-200 rounded-md">
+                    <p className="text-red-600">{error}</p>
+                  </div>
+                )}
+
+                {/* Booking Interface */}
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+                  <Calendar 
+                    onDateSelect={handleDateSelect}
+                    locationId={selectedLocationId}
+                    providerId={selectedProviderId}
+                  />
+                  <TimeSlots 
+                    selectedDate={selectedDate}
+                    locationId={selectedLocationId}
+                    providerId={selectedProviderId}
+                    onTimeSelect={handleTimeSelect}
+                  />
                 </div>
-              )}
-
-              {/* Booking Interface */}
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-                <Calendar 
-                  onDateSelect={handleDateSelect}
-                  locationId={selectedLocationId}
-                  providerId={selectedProviderId}
-                />
-                <TimeSlots 
-                  selectedDate={selectedDate}
-                  locationId={selectedLocationId}
-                  providerId={selectedProviderId}
-                  onTimeSelect={handleTimeSelect}
-                />
-              </div>
-            </>
-          )}
+              </>
+            )}
+          </div>
         </div>
       </main>
     </div>
